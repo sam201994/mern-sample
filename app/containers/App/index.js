@@ -10,19 +10,18 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 
-import HomePage from 'containers/HomePage/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
-
-import GlobalStyle from '../../global-styles';
+import MentorsPage from 'containers/Mentors';
+import MentorAdmin from 'containers/Mentors/MentorAdmin';
 
 export default function App() {
   return (
     <div>
       <Switch>
-        <Route exact path="/" component={HomePage} />
+        <Route exact path="/" component={MentorsPage} />
+        <Route path="/mentor_admin/:id?" component={MentorAdmin} />
         <Route component={NotFoundPage} />
       </Switch>
-      <GlobalStyle />
     </div>
   );
 }

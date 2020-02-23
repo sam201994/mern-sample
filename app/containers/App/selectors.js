@@ -8,4 +8,4 @@ const makeSelectLocation = () =>
     routerState => routerState.location,
   );
 
-export { makeSelectLocation };
+export default { makeSelectLocation };

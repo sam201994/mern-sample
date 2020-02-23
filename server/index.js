@@ -6,6 +6,9 @@ const logger = require('./logger');
 const argv = require('./argv');
 const port = require('./port');
 const setup = require('./middlewares/frontendMiddleware');
+const mentorRoutes = require('./routes/mentor.route');
+const mongoose = require('mongoose');
+
 const isDev = process.env.NODE_ENV !== 'production';
 const ngrok =
   (isDev && process.env.ENABLE_TUNNEL) || argv.tunnel
@@ -15,7 +18,7 @@ const { resolve } = require('path');
 const app = express();
 
 // If you need a backend, e.g. an API, add your custom backend-specific middleware here
-// app.use('/api', myApi);
+app.use('/api', mentorRoutes);
 
 // In production we need to pass these values in instead of relying on webpack
 setup(app, {
@@ -27,6 +30,18 @@ setup(app, {
 const customHost = argv.host || process.env.HOST;
 const host = customHost || null; // Let http.Server use its default IPv6/4 host
 const prettyHost = customHost || 'localhost';
+
+// connect to database
+mongoose.Promise = global.Promise;
+mongoose.connect(
+  'mongodb+srv://test1:test1@cluster0-m0k4g.mongodb.net/test?retryWrites=true&w=majority',
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  },
+);
+
+app.get('/', (req, res) => res.end('Api working'));
 
 // use the gzipped bundle
 app.get('*.js', (req, res, next) => {
