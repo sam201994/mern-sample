@@ -264,10 +264,6 @@ class MentorAdmin extends Component {
                 />
               </InputField>
             </Field>
-
-            <Field>
-              <Button onClick={this.handleSubmit}>Submit</Button>
-            </Field>
           </Container>
           <LeftContainer>
             <Field>
@@ -295,6 +291,9 @@ class MentorAdmin extends Component {
             </Field>
           </LeftContainer>
         </Body>
+        <Field>
+          <Button onClick={this.handleSubmit}>Submit</Button>
+        </Field>
       </Box>
     );
   }
