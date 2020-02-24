@@ -29,17 +29,17 @@ export function* handleLoadPage(action) {
     yield call(LoadMentors);
   }
 
-  // if (location.pathname.includes('/mentor_admin') && id) {
-  //   yield put(MentorsAction.fetchMentor(id));
-  //   const requestURL = `${myApi}/${id}`;
-  //   const response = yield call(request, requestURL);
-  //   if (response.success) {
-  //     const mentor = response.mentor[0] ? response.mentor[0] : [];
-  //     yield put(MentorsAction.fetchMentorSuccess(mentor));
-  //   } else {
-  //     yield call(history.push, '/');
-  //   }
-  // }
+  if (location.pathname.includes('/mentor_admin') && id) {
+    yield put(MentorsAction.fetchMentor(id));
+    const requestURL = `${myApi}/${id}`;
+    const response = yield call(request, requestURL);
+    if (response.success) {
+      const mentor = response.mentor[0] ? response.mentor[0] : [];
+      yield put(MentorsAction.fetchMentorSuccess(mentor));
+    } else {
+      yield call(history.push, '/');
+    }
+  }
 }
 
 export function* LoadMentors() {
