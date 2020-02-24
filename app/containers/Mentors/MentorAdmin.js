@@ -26,10 +26,17 @@ const Button = styled.div`
 `;
 
 const Container = styled.div`
-  max-width: 500px;
   display: flex;
   flex-direction: column;
-  margin: 100px;
+  width: 350px;
+`;
+
+const LeftContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  max-width: 500px;
+  width: 100%;
+  max-width: 350px;
 `;
 
 const Field = styled.div`
@@ -68,7 +75,47 @@ const InputField = styled.div`
 const HeadingContainer = styled.div`
   color: #102f41;
   font-size: 50px;
-  margin-bottom: 30px;
+  margin: 20px;
+`;
+
+const Box = styled.div`
+  display: flex;
+  flex-direction: column;
+  max-width: 700px;
+  margin: 100px;
+`;
+
+const Header = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Body = styled.div`
+  display: flex;
+  width: 700px;
+  justify-content: space-between;
+`;
+
+const AddButton = styled(Button)`
+  position: absolute;
+  width: 50px;
+  margin-left: -50px;
+  height: 44px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+`;
+
+const TaskContainer = styled.div`
+  display: flex;
+  align-content: flex-start;
+  max-width: 350px;
+  flex-wrap: wrap;
+`;
+
+const TaskTags = styled(Button)`
+  width: auto;
+  margin: 2px;
 `;
 
 class MentorAdmin extends Component {
@@ -82,7 +129,7 @@ class MentorAdmin extends Component {
   }
 
   componentWillReceiveProps = nextProps => {
-    this.setState({ form: nextProps.mentor, id: nextProps.id });
+    this.setState({ form: nextProps.mentor, id: nextProps.id, inputTask: '' });
   };
 
   handleSubmit = () => {
@@ -99,7 +146,7 @@ class MentorAdmin extends Component {
     if (!form.company) {
       error = {
         ...error,
-        company: 'Please enter the name of your current company',
+        company: 'Please enter company',
       };
     }
     if (!form.fullName) {
@@ -131,59 +178,124 @@ class MentorAdmin extends Component {
     });
   };
 
+  handleInputTask = event => {
+    this.setState({
+      inputTask: event.target.value,
+    });
+  };
+
+  addTasks = () => {
+    const { form, inputTask } = this.state;
+    const newTaskList = form.tasks || [];
+    if (newTaskList.indexOf(inputTask) === -1 && inputTask) {
+      newTaskList.push(inputTask);
+      this.setState({
+        inputTask: '',
+        form: {
+          ...form,
+          tasks: newTaskList,
+        },
+      });
+    }
+  };
+
+  removeTaskTag = task => {
+    const { form } = this.state;
+    const taskList = form.tasks || [];
+    const newTaskList = taskList.filter(value => value !== task);
+    this.setState({
+      form: {
+        ...form,
+        tasks: newTaskList,
+      },
+    });
+  };
+
   render() {
-    const { error, form } = this.state;
+    const { error, form, inputTask } = this.state;
+    const taskList = form.tasks ? form.tasks : [];
     return (
-      <Container>
-        <Field>
-          <HeadingContainer>Mentor Admin</HeadingContainer>
-        </Field>
+      <Box>
+        <Header>
+          <Field>
+            <HeadingContainer>Mentor Admin</HeadingContainer>
+          </Field>
+        </Header>
+        <Body>
+          <Container>
+            <Field>
+              <Label>
+                <Title>Name*</Title>
+                <ErrorContainer>{error.fullName}</ErrorContainer>
+              </Label>
+              <InputField>
+                <input
+                  type="text"
+                  value={form.fullName || ''}
+                  onChange={value => this.handleChange('fullName', value)}
+                />
+              </InputField>
+            </Field>
 
-        <Field>
-          <Label>
-            <Title>Name</Title>
-            <ErrorContainer>{error.fullName}</ErrorContainer>
-          </Label>
-          <InputField>
-            <input
-              type="text"
-              value={form.fullName || ''}
-              onChange={value => this.handleChange('fullName', value)}
-            />
-          </InputField>
-        </Field>
+            <Field>
+              <Label>
+                <Title>Company*</Title>
+                <ErrorContainer>{error.company}</ErrorContainer>
+              </Label>
+              <InputField>
+                <input
+                  type="text"
+                  value={form.company || ''}
+                  onChange={value => this.handleChange('company', value)}
+                />
+              </InputField>
+            </Field>
 
-        <Field>
-          <Label>
-            <Title>Company</Title>
-            <ErrorContainer>{error.company}</ErrorContainer>
-          </Label>
-          <InputField>
-            <input
-              type="text"
-              value={form.company || ''}
-              onChange={value => this.handleChange('company', value)}
-            />
-          </InputField>
-        </Field>
+            <Field>
+              <Label>
+                <Title>Location*</Title>
+                <ErrorContainer>{error.location}</ErrorContainer>
+              </Label>
+              <InputField>
+                <input
+                  type="text"
+                  value={form.location || ''}
+                  onChange={value => this.handleChange('location', value)}
+                />
+              </InputField>
+            </Field>
 
-        <Field>
-          <Label>
-            <Title>Location</Title>
-            <ErrorContainer>{error.location}</ErrorContainer>
-          </Label>
-          <InputField>
-            <input
-              type="text"
-              value={form.location || ''}
-              onChange={value => this.handleChange('location', value)}
-            />
-          </InputField>
-        </Field>
-        <Field>
-          <Button onClick={this.handleSubmit}>Submit</Button>
-        </Field>
-      </Container>
+            <Field>
+              <Button onClick={this.handleSubmit}>Submit</Button>
+            </Field>
+          </Container>
+          <LeftContainer>
+            <Field>
+              <Label>
+                <Title>Tasks</Title>
+                <ErrorContainer>{error.tasks}</ErrorContainer>
+              </Label>
+              <InputField>
+                <input
+                  type="text"
+                  value={inputTask || ''}
+                  onChange={value => this.handleInputTask(value)}
+                />
+                <AddButton onClick={this.addTasks}>+</AddButton>
+              </InputField>
+            </Field>
+            <Field>
+              <TaskContainer>
+                {taskList.map(task => (
+                  <TaskTags onClick={value => this.removeTaskTag(task)}>
+                    {task}
+                  </TaskTags>
+                ))}
+              </TaskContainer>
+            </Field>
+          </LeftContainer>
+        </Body>
+      </Box>
     );
   }
 }

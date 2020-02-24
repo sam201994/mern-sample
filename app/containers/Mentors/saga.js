@@ -11,24 +11,35 @@ import MentorsAction, { ActionTypes } from './actions';
 
 const myApi = 'http://localhost:3000/api/';
 
+const getUrlPathParams = (urlDef, url, key) => {
+  const keys = urlDef.split('/');
+  const values = url.split('/');
+  const result = {};
+  keys.map((key, index) => {
+    result[key] = values[index] ? values[index] : '';
+  });
+  return result[`:${key}`];
+};
+
 export function* handleLoadPage(action) {
   const { location } = action.payload;
-  const path = location.pathname.split('/');
-  const id = path[path.length - 1];
+  const id = getUrlPathParams('/mentor_admin/:id', location.pathname, 'id');
 
   if (location.pathname === '/') {
     yield call(LoadMentors);
   }
 
-  if (location.pathname.includes('/mentor_admin') && id) {
-    yield put(MentorsAction.fetchMentor(id));
-    const requestURL = `${myApi}/${id}`;
-    const response = yield call(request, requestURL);
-    if (response.success) {
-      const mentor = response.mentor[0] ? response.mentor[0] : [];
-      yield put(MentorsAction.fetchMentorSuccess(mentor));
-    }
-  }
+  // if (location.pathname.includes('/mentor_admin') && id) {
+  //   yield put(MentorsAction.fetchMentor(id));
+  //   const requestURL = `${myApi}/${id}`;
+  //   const response = yield call(request, requestURL);
+  //   if (response.success) {
+  //     const mentor = response.mentor[0] ? response.mentor[0] : [];
+  //     yield put(MentorsAction.fetchMentorSuccess(mentor));
+  //   } else {
+  //     yield call(history.push, '/');
+  //   }
+  // }
 }
 
 export function* LoadMentors() {
@@ -100,6 +111,7 @@ export function* handleSaveEditedMentor(action) {
   };
   try {
     const response = yield call(request, requestURL, options);
+    console.log("response edit: ", response)
     if (response.success) {
       yield put(MentorsAction.saveMentorSuccess());
       yield call(history.push, '/');
@@ -120,7 +132,3 @@ function* MenotrsSaga() {
 }
 
 export default MenotrsSaga;
-
-// import AppSelectors from '../App/selectors';
-// const routeSelector = AppSelectors.makeSelectLocation();
-// const route = yield select(routeSelector);

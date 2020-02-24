@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { MdEdit, MdDelete } from 'react-icons/md';
+import { MdEdit, MdDelete, MdArrowDropDownCircle } from 'react-icons/md';
 import Avatar from '../../images/avatar.png';
 import MentorActions from './actions';
 
@@ -27,7 +27,7 @@ const ButtonRow = styled.div`
   display: flex;
   justify-content: flex-end;
   position: absolute;
-  margin-left: 230px;
+  margin-left: 215px;
   margin-top: 5px;
 `;
 
@@ -58,7 +58,33 @@ const Description = styled.div`
   padding-top: 3px;
 `;
 
+const TaskModal = styled.div`
+  position: absolute;
+  margin-top: 120px;
+  width: 300px;
+  height: 200px;
+  background-color: #fbf7f7;
+  opacity: 0.9;
+`;
+
+const Tasks = styled.div`
+  text-align: center;
+  padding: 20px;
+  font-weight: 500;
+`;
+
+const NoTask = styled.div`
+  text-align: center;
+  padding: 40px;
+  font-weight: 500;
+  color: #928f8f;
+`;
+
 class MentorRow extends Component {
+  state = {
+    showTaskModal: false,
+  };
+
   onEditButton = () => {
     const { actions, mentor } = this.props;
     actions.goToEditMentorForm(mentor._id, mentor);
@@ -69,12 +95,43 @@ class MentorRow extends Component {
     actions.deleteMentor(mentor._id);
   };
 
+  toggleTaskList = () => {
+    const { showTaskModal } = this.state;
+    this.setState({
+      showTaskModal: !showTaskModal,
+    });
+  };
+
+  renderTaskModal = () => {
+    const { showTaskModal } = this.state;
+    const { mentor } = this.props;
+    const tasks = mentor.tasks || [];
+
+    if (showTaskModal) {
+      if (tasks.length > 0) {
+        return (
+          <TaskModal>
+            <Tasks>{tasks.join(', ')}</Tasks>
+          </TaskModal>
+        );
+      }
+      return (
+        <TaskModal>
+          <NoTask>No Task Found</NoTask>
+        </TaskModal>
+      );
+    }
+  };
+
   render() {
     const { mentor } = this.props;
     return (
       <Container>
         <TopCol>
           <ButtonRow>
+            <Button onClick={this.toggleTaskList}>
+              <MdArrowDropDownCircle />
+            </Button>
             <Button onClick={this.onDeleteButton}>
               <MdDelete />
             </Button>
@@ -90,6 +147,7 @@ class MentorRow extends Component {
             {mentor.location}, {mentor.company}
           </Description>
         </BottomCol>
+        {this.renderTaskModal()}
       </Container>
     );
   }

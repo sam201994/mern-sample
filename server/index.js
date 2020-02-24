@@ -2,6 +2,7 @@
 
 const express = require('express');
 const logger = require('./logger');
+const bodyParser = require('body-parser');
 
 const argv = require('./argv');
 const port = require('./port');
@@ -16,6 +17,9 @@ const ngrok =
     : false;
 const { resolve } = require('path');
 const app = express();
+
+app.use(bodyParser.urlencoded({ extended:true }));
+app.use(bodyParser.json());
 
 // If you need a backend, e.g. an API, add your custom backend-specific middleware here
 app.use('/api', mentorRoutes);
